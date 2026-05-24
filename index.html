@@ -1,0 +1,1904 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Navigasi Cerdas UNIB B- Dynamic A* Portal</title>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- KaTeX for gorgeous LaTeX Rendering -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              display: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            colors: {
+              unib: {
+                50: "#f0f7ff",
+                100: "#e0f2fe",
+                200: "#bae6fd",
+                500: "#0ea5e9", // Sky blue accent
+                600: "#2563eb", // Royal Blue primary
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+                950: "#0f172a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      .glass-card {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+      }
+      .text-gradient {
+        background: linear-gradient(
+          135deg,
+          #2563eb 0%,
+          #3b82f6 50%,
+          #06b6d4 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero-pattern {
+        background-color: #f8fafc;
+        background-image:
+          radial-gradient(#2563eb 0.5px, transparent 0.5px),
+          radial-gradient(#2563eb 0.5px, #f8fafc 0.5px);
+        background-size: 24px 24px;
+        background-position:
+          0 0,
+          12px 12px;
+        opacity: 0.05;
+      }
+      .glow-blue {
+        box-shadow: 0 0 40px -5px rgba(37, 99, 235, 0.15);
+      }
+      .glow-button {
+        box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.3);
+      }
+      /* Path animation inside SVG mock map */
+      @keyframes dash {
+        to {
+          stroke-dashoffset: -40;
+        }
+      }
+      .animate-route {
+        stroke-dasharray: 8, 4;
+        animation: dash 2s linear infinite;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased"
+  >
+    <!-- BANNER PENGUMUMAN ATAS -->
+    <div
+      class="bg-gradient-to-r from-unib-900 via-unib-800 to-indigo-900 text-white text-center py-2.5 px-4 text-xs font-semibold tracking-wide shadow-sm"
+    >
+      🚀 Proyek Penelitian Kecerdasan Buatan (Semester Ganjil 2026) oleh Ali
+      Akbar Bermano (G1A024041)
+    </div>
+
+    <!-- HEADER NAVIGASI -->
+    <header
+      class="sticky top-0 z-50 glass-card border-b border-slate-200/60 transition-all duration-300"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4"
+      >
+        <!-- Logo & Brand Title -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-tr from-unib-600 via-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-unib-600/20 shrink-0"
+          >
+            <i data-lucide="route" class="w-5 h-5"></i>
+          </div>
+          <div class="whitespace-nowrap">
+            <span
+              class="font-display font-extrabold text-base sm:text-lg text-slate-950 tracking-tight block leading-none"
+              >NAVIGASI UNIB</span
+            >
+            <span
+              class="text-[10px] text-unib-600 font-bold tracking-wider uppercase block mt-1 leading-none"
+              >Adaptive Pathfinding</span
+            >
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <nav
+          class="hidden lg:flex items-center gap-6 xl:gap-8 text-sm font-semibold text-slate-600 whitespace-nowrap"
+        >
+          <a href="#tentang" class="hover:text-unib-600 transition-colors"
+            >Tentang Aplikasi</a
+          >
+          <a href="#algoritma" class="hover:text-unib-600 transition-colors"
+            >Analisis Algoritma</a
+          >
+          <a href="#simulator" class="hover:text-unib-600 transition-colors"
+            >Simulasi Bobot</a
+          >
+          <a
+            href="#ai-assistant"
+            class="hover:text-unib-600 transition-colors flex items-center gap-1"
+            >✨ Asisten AI</a
+          >
+          <a href="#panduan" class="hover:text-unib-600 transition-colors"
+            >Cara Pakai</a
+          >
+          <a href="#sumber" class="hover:text-unib-600 transition-colors"
+            >Sumber Data</a
+          >
+        </nav>
+
+        <!-- CTA Button on the right & Mobile Toggle -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <a
+            href="https://ali2006.pythonanywhere.com/"
+            target="_blank"
+            class="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-unib-600 to-indigo-600 hover:from-unib-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl transition-all duration-300 hover:scale-[1.02] glow-button whitespace-nowrap"
+          >
+            <span>Buka Peta Utama</span>
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+
+          <!-- Hamburger Menu Button for Mobile/Tablet -->
+          <button
+            id="mobile-menu-toggle"
+            class="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:outline-none transition-colors"
+            aria-label="Toggle Menu"
+          >
+            <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile/Tablet Dropdown Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden lg:hidden border-t border-slate-200/60 bg-white/95 backdrop-blur-lg px-4 py-3 space-y-1 shadow-inner"
+      >
+        <a
+          href="#tentang"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >Tentang Aplikasi</a
+        >
+        <a
+          href="#algoritma"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >Analisis Algoritma</a
+        >
+        <a
+          href="#simulator"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >Simulasi Bobot</a
+        >
+        <a
+          href="#ai-assistant"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >✨ Asisten AI</a
+        >
+        <a
+          href="#panduan"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >Cara Pakai</a
+        >
+        <a
+          href="#sumber"
+          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
+          >Sumber Data</a
+        >
+        <div class="pt-2 pb-1 px-3.5 sm:hidden">
+          <a
+            href="https://ali2006.pythonanywhere.com/"
+            target="_blank"
+            class="w-full justify-center inline-flex items-center gap-2 bg-gradient-to-r from-unib-600 to-indigo-600 text-white text-sm font-bold py-2.5 rounded-xl"
+          >
+            <span>Buka Peta Utama</span>
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <!-- SEKSI HERO (BANNER UTAMA) -->
+      <section
+        class="relative bg-white overflow-hidden border-b border-slate-200 py-12 md:py-20"
+      >
+        <div class="absolute inset-0 hero-pattern"></div>
+        <!-- Glow effect decoration -->
+        <div
+          class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300 to-cyan-200 rounded-full blur-[120px] opacity-20 pointer-events-none"
+        ></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Sisi Kiri: Deskripsi -->
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+              <div
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-unib-50 border border-unib-200 text-unib-700 text-xs font-bold shadow-sm"
+              >
+                <span
+                  class="w-2.5 h-2.5 rounded-full bg-unib-600 animate-pulse"
+                ></span>
+                <span>Dynamic $A^*$ with Custom Scenario Framework</span>
+              </div>
+              <h1
+                class="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-slate-900 leading-[1.1] tracking-tight"
+              >
+                Navigasi Kampus <br />
+                <span class="text-gradient">Adaptif &amp; Presisi Tinggi</span>
+              </h1>
+              <p
+                class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto lg:mx-0"
+              >
+                Navigasi Kampus UNIB menggunakan algoritma **Dynamic A*** dengan
+                optimasi graf dan segmen jalan presisi tinggi. Solusi cerdas
+                berpeta interaktif untuk menganalisis jalur terpendek sesuai
+                kondisi lalu lintas nyata kampus.
+              </p>
+
+              <!-- Bento Grid Stats -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 text-left">
+                <div
+                  class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-unib-300 hover:bg-white transition-all duration-300 shadow-sm"
+                >
+                  <span
+                    class="block text-2xl font-extrabold text-slate-900 font-display"
+                    >51 POI</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Landmark Utama</span
+                  >
+                </div>
+                <div
+                  class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-unib-300 hover:bg-white transition-all duration-300 shadow-sm"
+                >
+                  <span
+                    class="block text-2xl font-extrabold text-slate-900 font-display"
+                    >149 Node</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Waypoint Segmen</span
+                  >
+                </div>
+                <div
+                  class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-unib-300 hover:bg-white transition-all duration-300 shadow-sm"
+                >
+                  <span
+                    class="block text-2xl font-extrabold text-slate-900 font-display"
+                    >213 Edge</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Jalan (199 + 14 Auto)</span
+                  >
+                </div>
+                <div
+                  class="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-unib-300 hover:bg-white transition-all duration-300 shadow-sm"
+                >
+                  <span
+                    class="block text-2xl font-extrabold text-slate-900 font-display"
+                    >Kustom</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Scenario Engine</span
+                  >
+                </div>
+              </div>
+
+              <!-- CTA buttons -->
+              <div
+                class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4 pt-4"
+              >
+                <a
+                  href="https://ali2006.pythonanywhere.com/"
+                  target="_blank"
+                  class="inline-flex items-center justify-center gap-2 bg-slate-950 hover:bg-slate-900 text-white font-semibold px-6 py-4 rounded-xl transition-all duration-200 glow-button"
+                >
+                  <i data-lucide="map-pin" class="w-5 h-5 text-unib-400"></i>
+                  <span>Mulai Navigasi Interaktif</span>
+                </a>
+                <a
+                  href="#simulator"
+                  class="inline-flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold px-6 py-4 rounded-xl transition-all duration-200 shadow-sm"
+                >
+                  <i
+                    data-lucide="calculator"
+                    class="w-5 h-5 text-slate-500"
+                  ></i>
+                  <span>Coba Simulator Cost</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Sisi Kanan: Visual Mockup GIS -->
+            <div class="lg:col-span-5 relative">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-unib-200 to-indigo-100 rounded-3xl transform rotate-3 scale-105 opacity-60 blur-xl pointer-events-none"
+              ></div>
+              <div
+                class="relative bg-slate-900 rounded-3xl p-3 shadow-2xl border border-slate-800/80"
+              >
+                <!-- Header Mockup Web -->
+                <div
+                  class="flex items-center justify-between px-4 pb-3 pt-1.5 border-b border-slate-800/80"
+                >
+                  <div class="flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                  </div>
+                  <span
+                    class="text-[9px] text-slate-500 font-mono tracking-wider"
+                    >ali2006.pythonanywhere.com</span
+                  >
+                  <div class="w-4 h-4"></div>
+                </div>
+
+                <!-- Isi Mockup (Mencari file 'screenshot.png') -->
+                <div
+                  class="rounded-2xl overflow-hidden bg-slate-950 aspect-[4/3] relative flex flex-col justify-end p-6 group"
+                >
+                  <!-- Screenshot Utama -->
+                  <img
+                    src="screenshot.png"
+                    id="screenshot-img"
+                    onerror="
+                      this.style.display = 'none';
+                      document
+                        .getElementById('mock-fallback-ui')
+                        .classList.remove('hidden');
+                    "
+                    class="absolute inset-0 w-full h-full object-cover opacity-85 transition-transform duration-750 group-hover:scale-105 z-10"
+                    alt="Tangkapan Layar Proyek Navigasi Cerdas"
+                  />
+
+                  <!-- CADANGAN VECTOR INTERAKTIF JIKA SCREENSHOT BELUM DIUPLOAD / ERROR -->
+                  <div
+                    id="mock-fallback-ui"
+                    class="hidden absolute inset-0 bg-slate-950 flex flex-col justify-between p-4 overflow-hidden select-none"
+                  >
+                    <!-- Elemen UI GIS Simulator (Leaflet simulation) -->
+                    <div class="absolute top-3 left-3 flex flex-col gap-1 z-20">
+                      <div
+                        class="w-7 h-7 bg-white rounded shadow-md flex items-center justify-center font-bold text-slate-800 text-xs hover:bg-slate-100 cursor-pointer"
+                      >
+                        +
+                      </div>
+                      <div
+                        class="w-7 h-7 bg-white rounded shadow-md flex items-center justify-center font-bold text-slate-800 text-xs hover:bg-slate-100 cursor-pointer"
+                      >
+                        -
+                      </div>
+                    </div>
+
+                    <div
+                      class="absolute top-3 right-3 bg-slate-900/90 border border-slate-700/50 rounded-lg px-2.5 py-1 text-[8px] font-mono text-cyan-400 flex items-center gap-1.5 z-20"
+                    >
+                      <span
+                        class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"
+                      ></span>
+                      <span>DYNAMIC WEIGHT ACTIVE</span>
+                    </div>
+
+                    <!-- Gambar Jalur Graf Menyilang SVG -->
+                    <svg
+                      class="absolute inset-0 w-full h-full p-4"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                    >
+                      <defs>
+                        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                          <stop
+                            offset="0%"
+                            stop-color="#3b82f6"
+                            stop-opacity="0.3"
+                          ></stop>
+                          <stop
+                            offset="100%"
+                            stop-color="#3b82f6"
+                            stop-opacity="0"
+                          ></stop>
+                        </radialGradient>
+                      </defs>
+                      <!-- Grid Lines -->
+                      <path
+                        d="M 0 20 L 100 20 M 0 40 L 100 40 M 0 60 L 100 60 M 0 80 L 100 80 M 20 0 L 20 100 M 40 0 L 40 100 M 60 0 L 60 100 M 80 0 L 80 100"
+                        stroke="rgba(255,255,255,0.04)"
+                        stroke-width="0.3"
+                      ></path>
+
+                      <!-- Jalan Lain (Gray) -->
+                      <path
+                        d="M 10 30 Q 35 15 50 40 T 90 20 M 20 75 Q 40 85 75 60 T 95 85"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.15)"
+                        stroke-width="1.2"
+                        stroke-linecap="round"
+                      ></path>
+
+                      <!-- Rute Terpilih (Glow Blue) -->
+                      <path
+                        d="M 15 85 L 35 55 L 45 65 L 75 35 L 85 15"
+                        fill="none"
+                        stroke="#2563eb"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        opacity="0.4"
+                      ></path>
+                      <path
+                        d="M 15 85 L 35 55 L 45 65 L 75 35 L 85 15"
+                        fill="none"
+                        stroke="#0ea5e9"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        class="animate-route"
+                      ></path>
+
+                      <!-- Nodes (Titik Hubung) -->
+                      <circle
+                        cx="15"
+                        cy="85"
+                        r="3.5"
+                        fill="#10b981"
+                        class="animate-ping"
+                        opacity="0.4"
+                      ></circle>
+                      <circle cx="15" cy="85" r="2" fill="#10b981"></circle>
+                      <!-- Start -->
+
+                      <circle cx="35" cy="55" r="1.5" fill="#38bdf8"></circle>
+                      <circle cx="45" cy="65" r="1.5" fill="#38bdf8"></circle>
+                      <circle cx="75" cy="35" r="1.5" fill="#38bdf8"></circle>
+
+                      <circle
+                        cx="85"
+                        cy="15"
+                        r="3.5"
+                        fill="#f43f5e"
+                        class="animate-ping"
+                        opacity="0.4"
+                      ></circle>
+                      <circle cx="85" cy="15" r="2" fill="#f43f5e"></circle>
+                      <!-- Goal -->
+                    </svg>
+
+                    <!-- Atribut Dashboard Mini Map -->
+                    <div
+                      class="relative z-15 w-full bg-slate-900/90 border border-slate-800/80 rounded-xl p-2 flex items-center justify-between text-[9px]"
+                    >
+                      <div>
+                        <span class="text-slate-400 block">Rute Terpilih</span>
+                        <span class="font-bold text-white block"
+                          >Rektorat ➔ GKB I</span
+                        >
+                      </div>
+                      <div class="text-right">
+                        <span class="text-slate-400 block">Estimasi Waktu</span>
+                        <span class="font-bold text-cyan-400 block font-mono"
+                          >1.2 m/s (Optimal)</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="relative z-20 space-y-2 mt-auto">
+                    <span
+                      class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-unib-500/20 border border-unib-500/30 text-unib-400 text-[10px] font-bold uppercase tracking-wider"
+                      >GIS Portal Live</span
+                    >
+                    <h3
+                      class="text-xl font-bold text-white tracking-tight leading-snug font-display"
+                    >
+                      Sistem Informasi Geospasial UNIB
+                    </h3>
+                    <p class="text-xs text-slate-300">
+                      Menyediakan komputasi bobot tepi dinamis &amp; deduplikasi
+                      jalur otomatis secara real-time melalui antarmuka Leaflet.
+                    </p>
+                    <a
+                      href="https://ali2006.pythonanywhere.com/"
+                      target="_blank"
+                      class="inline-flex items-center gap-1.5 text-xs text-unib-400 font-bold hover:text-unib-300 transition-colors pt-2"
+                    >
+                      <span>Buka tautan web peta</span>
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKSI SPESIFIKASI DAN LEGENDA -->
+      <section id="tentang" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <h2
+              class="font-display font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight"
+            >
+              Tentang Aplikasi &amp; Model Bobot
+            </h2>
+            <p class="text-slate-600 text-base">
+              Algoritma pencarian ini dirancang agar mampu beradaptasi secara
+              dinamis dengan menghitung ulang bobot jalan berdasarkan hambatan
+              aktual di lapangan.
+            </p>
+          </div>
+
+          <!-- Bento Grid Fitur Utama -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+            <div
+              class="md:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm flex flex-col justify-between"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-unib-50 text-unib-600 flex items-center justify-center mb-6"
+              >
+                <i data-lucide="database" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                  Penyusunan Segmen Graf
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                  Gabungan 51 POI vital kampus beserta 149 waypoint jalan
+                  menghasilkan resolusi 200 node hasil segmentasi untuk akurasi
+                  pelacakan koordinat terbaik.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="md:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm flex flex-col justify-between"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6"
+              >
+                <i data-lucide="layers" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                  Scenario Engine Kosong (User-Defined)
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                  Fitur skenario lalu lintas sengaja dikosongkan pada kondisi
+                  awal agar pengguna dapat merancang, menyimpan, dan
+                  mengaktifkan skenario kustom mereka sendiri secara dinamis.
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="md:col-span-4 p-6 rounded-2xl bg-white border border-slate-200/60 shadow-sm flex flex-col justify-between"
+            >
+              <div
+                class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-6"
+              >
+                <i data-lucide="sliders" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                  Deduplikasi Jalur Otomatis
+                </h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                  Sistem secara otomatis mendeteksi dan mengeliminasi jalur
+                  redundan di area sempit, menjamin efisiensi ruang komputasi
+                  dan menghindari loop pencarian.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Detail Parameter Legenda -->
+          <div
+            class="glass-card rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200/80"
+          >
+            <h3
+              class="font-display font-extrabold text-xl text-slate-900 mb-6 flex items-center gap-2"
+            >
+              <i
+                data-lucide="sliders-horizontal"
+                class="w-5 h-5 text-unib-600"
+              ></i>
+              <span>Parameter Multiplier Hambatan Jalan Kampus</span>
+            </h3>
+
+            <div class="space-y-4">
+              <h4
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2"
+              >
+                <span class="w-2 h-2 rounded-full bg-unib-600"></span>
+                <span>Kondisi Lalu Lintas ($k_{scenario}$)</span>
+              </h4>
+              <!-- Grid Kondisi Jalan disederhanakan menjadi tepat 4 item sesuai spesifikasi -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Normal -->
+                <div
+                  class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
+                >
+                  <span
+                    class="text-sm font-semibold text-slate-700 flex items-center gap-2.5"
+                  >
+                    <span
+                      class="w-3.5 h-3.5 rounded bg-emerald-500/20 border border-emerald-500 flex items-center justify-center text-[10px] text-emerald-700 font-bold"
+                      >✓</span
+                    >
+                    Normal
+                  </span>
+                  <span
+                    class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold"
+                    >×1.0</span
+                  >
+                </div>
+                <!-- Sibuk -->
+                <div
+                  class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
+                >
+                  <span
+                    class="text-sm font-semibold text-slate-700 flex items-center gap-2.5"
+                  >
+                    <span
+                      class="w-3.5 h-3.5 rounded bg-amber-500/20 border border-amber-500 flex items-center justify-center text-[10px] text-amber-700 font-bold"
+                      >🚦</span
+                    >
+                    Sibuk
+                  </span>
+                  <span
+                    class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 text-xs font-bold"
+                    >×2.0</span
+                  >
+                </div>
+                <!-- Berlubang -->
+                <div
+                  class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
+                >
+                  <span
+                    class="text-sm font-semibold text-slate-700 flex items-center gap-2.5"
+                  >
+                    <span
+                      class="w-3.5 h-3.5 rounded bg-orange-500/20 border border-orange-500 flex items-center justify-center text-[10px] text-orange-750 font-bold"
+                      >⚠️</span
+                    >
+                    Berlubang
+                  </span>
+                  <span
+                    class="px-2.5 py-1 rounded bg-orange-100 text-orange-800 text-xs font-bold"
+                    >×1.6</span
+                  >
+                </div>
+                <!-- Ditutup -->
+                <div
+                  class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-200 shadow-sm"
+                >
+                  <span
+                    class="text-sm font-semibold text-slate-700 flex items-center gap-2.5"
+                  >
+                    <span
+                      class="w-3.5 h-3.5 rounded bg-rose-500/20 border border-rose-500 flex items-center justify-center text-[10px] text-rose-700 font-bold"
+                      >🚫</span
+                    >
+                    Ditutup
+                  </span>
+                  <span
+                    class="px-2.5 py-1 rounded bg-rose-100 text-rose-800 text-xs font-bold"
+                    >∞ (Buntu)</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKSI RINGKASAN TEORI & ALGORITMA -->
+      <section
+        id="algoritma"
+        class="py-20 bg-white border-t border-b border-slate-200"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <!-- Kiri: Penjelasan Matematika -->
+            <div class="lg:col-span-7 space-y-6">
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold"
+              >
+                <span>Sains Komputer &amp; Struktur Graf</span>
+              </div>
+              <h2
+                class="font-display font-black text-3xl sm:text-4xl text-slate-900 tracking-tight"
+              >
+                Desain Matematika Dynamic A*
+              </h2>
+
+              <p class="text-slate-600 leading-relaxed">
+                Pencarian heuristik terarah yang efisien dibanding Dijkstra
+                biasa (uninformed). Algoritma ini memfokuskan perluasan wilayah
+                simpul hanya ke arah tujuan, memangkas eksplorasi pada graf
+                bernode banyak.
+              </p>
+
+              <!-- Box Rumus LaTeX -->
+              <div
+                class="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm"
+              >
+                <span
+                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block"
+                  >Fungsi Evaluasi Total Node</span
+                >
+                <div class="text-center py-4 text-2xl font-mono text-unib-700">
+                  $$f(n) = g(n) + h(n) + s(n)$$
+                </div>
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-3 border-t border-slate-200/80 text-xs text-slate-500"
+                >
+                  <div>
+                    <strong class="block text-slate-800 text-sm font-semibold"
+                      >$g(n)$</strong
+                    >
+                    <span
+                      >Biaya aktual kumulatif dari posisi awal ke simpul $n$
+                      (jarak fisik + modifikasi skenario).</span
+                    >
+                  </div>
+                  <div>
+                    <strong class="block text-slate-800 text-sm font-semibold"
+                      >$h(n)$</strong
+                    >
+                    <span
+                      >Estimasi heuristik jarak garis lurus (Euclidean) dari $n$
+                      ke titik tujuan.</span
+                    >
+                  </div>
+                  <div>
+                    <strong class="block text-slate-800 text-sm font-semibold"
+                      >$s(n)$</strong
+                    >
+                    <span
+                      >Penalti tambahan spesifik skenario aktif pada simpul
+                      $n$.</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Teori Admisibilitas -->
+              <div class="space-y-2">
+                <h4 class="font-display font-bold text-lg text-slate-900">
+                  Konsistensi &amp; Admisibilitas Heuristik
+                </h4>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                  Heuristik bersifat *admissible* ($h(n) \le h^*(n)$) karena
+                  jarak garis lurus tidak akan pernah melebihi panjang jalan
+                  fisik nyata yang berliku. Ini menjamin pencarian rute yang
+                  dihasilkan selalu optimal dan efisien.
+                </p>
+              </div>
+            </div>
+
+            <!-- Kanan: Tabel Perbandingan Seleksi -->
+            <div class="lg:col-span-5 flex flex-col justify-center">
+              <div
+                class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4"
+              >
+                <h3 class="font-display font-extrabold text-lg text-slate-900">
+                  Perbandingan Seleksi Algoritma
+                </h3>
+                <p class="text-xs text-slate-500">
+                  Keunggulan Dynamic A* dibanding algoritma penentu jalur
+                  tradisional:
+                </p>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr
+                        class="border-b border-slate-200 text-slate-400 font-bold"
+                      >
+                        <th class="pb-2">Algoritma</th>
+                        <th class="pb-2">Kompleksitas</th>
+                        <th class="pb-2 text-right">Status Evaluasi</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-600">
+                      <tr>
+                        <td class="py-2.5 font-medium">Dijkstra</td>
+                        <td class="py-2.5">$O((V+E)\log V)$</td>
+                        <td class="py-2.5 text-right">
+                          <span
+                            class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold"
+                            >Baseline</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-medium">BFS</td>
+                        <td class="py-2.5">$O(V+E)$</td>
+                        <td class="py-2.5 text-right">
+                          <span
+                            class="px-2 py-0.5 rounded bg-rose-50 text-rose-600 font-bold"
+                            >Ditolak</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-medium">Bellman-Ford</td>
+                        <td class="py-2.5">$O(V \times E)$</td>
+                        <td class="py-2.5 text-right">
+                          <span
+                            class="px-2 py-0.5 rounded bg-rose-50 text-rose-600 font-bold"
+                            >Ditolak</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-bold text-unib-600">
+                          Dynamic A*
+                        </td>
+                        <td class="py-2.5 font-bold text-unib-600">
+                          $O((V+E)\log V)$
+                        </td>
+                        <td class="py-2.5 text-right">
+                          <span
+                            class="px-2.5 py-1 rounded bg-unib-100 text-unib-800 font-bold"
+                            >DIPILIH</span
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  class="bg-unib-50 rounded-xl p-4 border border-unib-100 text-xs text-unib-800 space-y-1"
+                >
+                  <strong class="block font-bold">Justifikasi Singkat:</strong>
+                  <span class="leading-relaxed"
+                    >A* memangkas ruang pencarian node menggunakan heuristik
+                    $h(n)$ sedangkan properti dinamis menjamin rute adaptif
+                    secara real-time tanpa perlu re-komputasi penuh.</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIMULATOR INTERAKTIF -->
+      <section id="simulator" class="py-20 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <div
+              class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-unib-100 text-unib-600 mb-2"
+            >
+              <i data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+            <h2
+              class="font-display font-extrabold text-3xl text-slate-900 tracking-tight"
+            >
+              Interactive Edge Cost Simulator
+            </h2>
+            <p class="text-slate-600 text-sm">
+              Simulasikan penghitungan bobot dinamis: $$w(e) = d(e) \times
+              k_{scenario} \times \left(1 + \frac{penalty}{20}\right)$$
+            </p>
+          </div>
+
+          <!-- Widget Simulator Card -->
+          <div
+            class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xl shadow-slate-200/50 grid grid-cols-1 md:grid-cols-12"
+          >
+            <!-- Control Panel (7 cols) -->
+            <div
+              class="p-6 sm:p-8 md:col-span-7 border-r border-slate-100 space-y-6"
+            >
+              <h3
+                class="font-display font-bold text-base text-slate-900 flex items-center gap-2"
+              >
+                <i data-lucide="sliders" class="w-5 h-5 text-unib-600"></i>
+                <span>Parameter Simulasi Jalur</span>
+              </h3>
+
+              <!-- Slider Jarak -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <label class="font-medium text-slate-700"
+                    >Jarak Fisik Nyata ($d(e)$)</label
+                  >
+                  <span
+                    id="val_distance"
+                    class="font-mono font-bold text-unib-600"
+                    >100 meter</span
+                  >
+                </div>
+                <input
+                  id="slide_distance"
+                  type="range"
+                  min="10"
+                  max="500"
+                  value="100"
+                  class="w-full accent-unib-600 h-2 bg-slate-100 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <!-- Dropdown Skenario (Hanya 4 opsi sesuai spesifikasi) -->
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-slate-700"
+                  >Kondisi Jalan ($k_{scenario}$)</label
+                >
+                <select
+                  id="select_scenario"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-unib-500"
+                >
+                  <option value="1.0">🟢 Normal (multiplier: 1.0)</option>
+                  <option value="2.0">
+                    🚦 Sibuk / Padat (multiplier: 2.0)
+                  </option>
+                  <option value="1.6">⚠️ Berlubang (multiplier: 1.6)</option>
+                  <option value="9999">
+                    🚫 Ditutup / Closed (multiplier: Infinity)
+                  </option>
+                </select>
+              </div>
+
+              <!-- Slider Kepadatan -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                  <label class="font-medium text-slate-700"
+                    >Tingkat Kepadatan Massa ($penalty(e)$)</label
+                  >
+                  <span
+                    id="val_crowd"
+                    class="font-mono font-bold text-amber-600"
+                    >Sangat Sepi (0%)</span
+                  >
+                </div>
+                <input
+                  id="slide_crowd"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="0"
+                  class="w-full accent-amber-500 h-2 bg-slate-100 rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <!-- Output Panel (5 cols) -->
+            <div
+              class="p-6 sm:p-8 md:col-span-5 bg-slate-900 text-white flex flex-col justify-between"
+            >
+              <div class="space-y-6">
+                <span
+                  class="text-xs font-bold text-slate-400 uppercase tracking-widest block"
+                  >Output Kalkulator Tepi</span
+                >
+
+                <!-- Display Bobot -->
+                <div class="space-y-1">
+                  <span
+                    class="text-[10px] text-slate-400 font-semibold block uppercase"
+                    >Total Bobot Teori ($w(e)$)</span
+                  >
+                  <div
+                    id="display_cost"
+                    class="text-5xl font-mono font-black tracking-tight text-cyan-400"
+                  >
+                    100.0
+                  </div>
+                  <span class="text-xs text-slate-400 block"
+                    >Ekuivalen dengan tingkat kesulitan jalan</span
+                  >
+                </div>
+
+                <!-- Detail Evaluasi -->
+                <div class="space-y-3 pt-6 border-t border-slate-800 text-xs">
+                  <span class="text-slate-400 block font-semibold uppercase"
+                    >Detail Evaluasi</span
+                  >
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Jarak Awal ($d$)</span>
+                    <span id="break_distance" class="font-mono">100m</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400"
+                      >Skenario Aktif ($k_{scenario}$)</span
+                    >
+                    <span id="break_scenario" class="font-mono">1.0x</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400"
+                      >Hambatan Massa ($1 + \frac{penalty}{20}$)</span
+                    >
+                    <span id="break_penalty" class="font-mono">1.0x</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Interpret Action (Gemini Feature 1) -->
+              <div class="pt-4 border-t border-slate-800">
+                <button
+                  id="btn-explain-weights-ai"
+                  class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-unib-600 to-indigo-600 hover:from-unib-700 hover:to-indigo-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition-all duration-300 transform active:scale-95 shadow-lg shadow-cyan-500/10"
+                >
+                  <i data-lucide="sparkles" class="w-4 h-4 text-cyan-200"></i>
+                  <span>Jelaskan Bobot dengan ✨ AI</span>
+                </button>
+              </div>
+
+              <!-- Warning Card -->
+              <div
+                id="simulator_warning"
+                class="mt-4 p-4 rounded-xl bg-slate-950 text-xs border border-slate-850 text-slate-300"
+              >
+                🟢 Kondisi jalur optimal. Dapat dilalui dengan kecepatan
+                berjalan rata-rata normal (~1.2 m/s).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKSI ASISTEN AI INTELLIGENT (Gemini Feature 2) -->
+      <section
+        id="ai-assistant"
+        class="py-20 bg-gradient-to-b from-slate-900 to-unib-950 text-white relative overflow-hidden"
+      >
+        <div
+          class="absolute inset-0 opacity-10 bg-[radial-gradient(#2563eb_1.5px,transparent_1.5px)] [background-size:24px_24px]"
+        ></div>
+
+        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+            <div
+              class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-unib-800/80 border border-unib-700/50 text-cyan-400 mb-2 shadow-lg shadow-blue-500/15"
+            >
+              <i data-lucide="bot" class="w-6 h-6"></i>
+            </div>
+            <h2
+              class="font-display font-extrabold text-3xl text-white tracking-tight"
+            >
+              Asisten Konsultan Navigasi ✨ AI
+            </h2>
+            <p class="text-slate-450 text-sm max-w-lg mx-auto">
+              Tanyakan skenario rute, rincian teknis algoritma Dynamic A*, atau
+              rancangan graf kampus UNIB langsung kepada kecerdasan buatan
+              Gemini.
+            </p>
+          </div>
+
+          <!-- Chatbox / Prompt Wrapper -->
+          <div
+            class="bg-slate-950/80 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6"
+          >
+            <!-- Suggestions grid -->
+            <div class="space-y-2">
+              <span
+                class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block"
+                >Pertanyaan Rekomendasi</span
+              >
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button
+                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
+                >
+                  ✨ Bagaimana cara merancang skenario kemacetan kustom saya
+                  sendiri?
+                </button>
+                <button
+                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
+                >
+                  ✨ Mengapa Dynamic A* lebih unggul dari Dijkstra pada graf
+                  kampus UNIB?
+                </button>
+                <button
+                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
+                >
+                  ✨ Bagaimana formula Haversine membantu mengukur jarak fisik
+                  antar POI?
+                </button>
+              </div>
+            </div>
+
+            <!-- Input Form -->
+            <div class="space-y-3">
+              <div class="relative">
+                <textarea
+                  id="ai-user-prompt"
+                  rows="3"
+                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-unib-500 rounded-2xl py-3 px-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-unib-500/20 transition-all"
+                  placeholder="Ketik pertanyaan Anda tentang navigasi kampus UNIB di sini..."
+                ></textarea>
+                <div class="absolute bottom-3 right-3 flex items-center gap-2">
+                  <span class="text-[10px] text-slate-500 font-mono"
+                    >Gemini 2.5 Flash</span
+                  >
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between flex-wrap gap-3">
+                <span class="text-xs text-slate-500">
+                  Diproses secara real-time berdasarkan data parameter kampus
+                  Anda.
+                </span>
+                <button
+                  id="btn-submit-ai"
+                  class="inline-flex items-center gap-2 bg-gradient-to-r from-unib-600 to-indigo-600 hover:from-unib-700 hover:to-indigo-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition-all duration-300 transform active:scale-95 glow-button"
+                >
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  <span>Tanya ✨ Gemini AI</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div
+              id="ai-response-container"
+              class="hidden border-t border-slate-800 pt-6 space-y-4"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-8 h-8 rounded-lg bg-unib-600/20 border border-unib-500/30 flex items-center justify-center text-cyan-400"
+                >
+                  <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
+                </div>
+                <span
+                  class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+                  >Respon Asisten AI</span
+                >
+              </div>
+
+              <!-- Response Text Area -->
+              <div
+                id="ai-response-text"
+                class="text-sm text-slate-200 leading-relaxed bg-slate-900/40 border border-slate-850 rounded-2xl p-5 overflow-auto max-h-[350px] space-y-3 prose prose-invert prose-sm"
+              >
+                <!-- Response injected dynamically -->
+              </div>
+            </div>
+
+            <!-- Loader (In-memory, clean UI) -->
+            <div
+              id="ai-loader"
+              class="hidden flex flex-col items-center justify-center py-8 space-y-3"
+            >
+              <div
+                class="w-10 h-10 border-4 border-unib-500 border-t-transparent rounded-full animate-spin"
+              ></div>
+              <span class="text-xs text-slate-455 animate-pulse font-medium"
+                >Gemini AI sedang menyusun analisis rute terbaik...</span
+              >
+            </div>
+
+            <!-- Error Alert -->
+            <div
+              id="ai-error-alert"
+              class="hidden p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex gap-2"
+            >
+              <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+              <span id="ai-error-message"
+                >Terjadi kesalahan saat memproses permintaan AI. Silakan coba
+                kembali.</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- USER GUIDE SECTION -->
+      <section id="panduan" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+            <div
+              class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-unib-50 text-unib-600 mb-2"
+            >
+              <i data-lucide="help-circle" class="w-6 h-6"></i>
+            </div>
+            <h2
+              class="font-display font-extrabold text-3xl text-slate-900 tracking-tight"
+            >
+              Cara Menggunakan Navigasi Kampus UNIB
+            </h2>
+            <p class="text-slate-600 text-sm">
+              Ikuti panduan langkah demi langkah berikut untuk menggunakan
+              platform visualisasi navigasi secara optimal.
+            </p>
+          </div>
+
+          <!-- 6 Langkah Penggunaan Modern Bento Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Langkah 1 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                1
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Pilih Awal &amp; Tujuan
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Pilih titik asal dan tujuan pada formulir rute yang disediakan
+                di menu samping peta, lalu klik tombol
+                <strong class="text-slate-900">Cari Rute Tercepat</strong>.
+              </p>
+            </div>
+
+            <!-- Langkah 2 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                2
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Bandingkan Rute Kustom
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Tekan tombol
+                <strong class="text-slate-900">📊 Bandingkan</strong> untuk
+                menganalisis dan membandingkan ETA rute Anda secara bersamaan di
+                seluruh variasi kondisi yang Anda inginkan.
+              </p>
+            </div>
+
+            <!-- Langkah 3 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                3
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Edit Bobot Jalan
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Aktifkan mode
+                <strong class="text-slate-900">✏ Edit Bobot Jalan</strong> pada
+                peta, lalu klik segmen jalan langsung untuk mengubah multiplier
+                hambatan, jarak fisik, atau arah satu arah.
+              </p>
+            </div>
+
+            <!-- Langkah 4 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                4
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Navigasi Tabel Jalan
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Gunakan tab <strong class="text-slate-900">Jalan</strong> untuk
+                melihat daftar jalan lengkap. Klik baris jalan manapun untuk
+                langsung memfokuskan peta (zoom) ke lokasi segmen tersebut.
+              </p>
+            </div>
+
+            <!-- Langkah 5 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                5
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Kelola Skenario Kustom
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Buka tab
+                <strong class="text-slate-900">🎭 Skenario</strong> untuk
+                merancang, mendefinisikan, dan menguji skenario lalu lintas
+                buatan Anda sendiri dari nol sesuai kebutuhan riset Anda.
+              </p>
+            </div>
+
+            <!-- Langkah 6 -->
+            <div
+              class="p-6 rounded-2xl bg-slate-50 border border-slate-200/60 shadow-sm relative group hover:bg-white transition-all duration-300"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-unib-600 text-white font-mono font-bold flex items-center justify-center shadow-md mb-4 group-hover:scale-105 transition-transform"
+              >
+                6
+              </div>
+              <h3 class="font-display font-bold text-lg text-slate-900 mb-2">
+                Dinamis Landmark
+              </h3>
+              <p class="text-slate-600 text-sm leading-relaxed">
+                Anda dapat menyeret dan melepas (<strong class="text-slate-900"
+                  >Drag-and-Drop POI</strong
+                >) langsung di peta interaktif untuk mengubah posisi koordinat
+                asal/tujuan secara real-time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKSI SUMBER DATA PETA -->
+      <section
+        id="sumber"
+        class="py-20 bg-slate-900 text-white relative overflow-hidden"
+      >
+        <div
+          class="absolute inset-0 opacity-10 bg-[radial-gradient(#2563eb_1px,transparent_1px)] [background-size:20px_20px]"
+        ></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Sisi Kiri: Ringkasan Sumber Data -->
+            <div class="lg:col-span-6 space-y-6">
+              <span
+                class="text-xs font-bold text-unib-500 uppercase tracking-widest block"
+                >Integritas Data Geospasial</span
+              >
+              <h2
+                class="font-display font-black text-3xl sm:text-4xl tracking-tight leading-tight"
+              >
+                Sumber Data Peta Kampus Akurat &amp; Terverifikasi
+              </h2>
+              <p class="text-slate-400 text-sm leading-relaxed">
+                Seluruh geometri peta diunggah, diuji, dan disesuaikan agar
+                sesuai dengan topologi lingkungan fisik nyata Universitas
+                Bengkulu.
+              </p>
+
+              <div class="space-y-4 text-xs">
+                <div class="flex gap-3">
+                  <div
+                    class="w-8 h-8 rounded bg-slate-800 text-unib-400 flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="map" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <strong class="block text-slate-200 font-bold mb-0.5"
+                      >Tile Map OpenStreetMap</strong
+                    >
+                    <span class="text-slate-400"
+                      >Peta dasar dunia terbuka, dirender secara halus
+                      menggunakan Leaflet.js API.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <div
+                    class="w-8 h-8 rounded bg-slate-800 text-unib-400 flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="navigation-2" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <strong class="block text-slate-200 font-bold mb-0.5"
+                      >Koordinat Node Terkalibrasi</strong
+                    >
+                    <span class="text-slate-400"
+                      >Koordinat GPS asli untuk 51 lokasi landmark vital kampus
+                      UNIB. Awalnya dicatat manual sebanyak 29 lokasi utama via
+                      Google Maps, kemudian diperluas secara presisi melalui
+                      antarmuka peta interaktif.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <div
+                    class="w-8 h-8 rounded bg-slate-800 text-unib-400 flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="route" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <strong class="block text-slate-200 font-bold mb-0.5"
+                      >Geometri &amp; OSRM Routing</strong
+                    >
+                    <span class="text-slate-400"
+                      >Polyline diambil langsung dari dataset OpenStreetMap,
+                      lalu rute jalan baru menggunakan OSRM API guna memastikan
+                      geometri lintasan mengikuti lekuk jalan nyata.</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sisi Kanan: Formula Jarak Haversine -->
+            <div class="lg:col-span-6">
+              <div
+                class="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6"
+              >
+                <span
+                  class="text-[10px] font-mono text-unib-500 block tracking-widest uppercase"
+                  >Perhitungan Jarak Fisik ($d$)</span
+                >
+                <h3 class="font-display font-bold text-lg text-slate-200">
+                  Formula Jarak Haversine
+                </h3>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                  Jarak tepi antara dua simpul koordinat bumi
+                  (latitude/longitude) dihitung secara matematis menggunakan
+                  rumus Haversine untuk memperkirakan kelengkungan planet bumi,
+                  bukan sekadar garis lurus:
+                </p>
+
+                <!-- Haversine LaTeX block -->
+                <div
+                  class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 text-center text-xs py-5"
+                >
+                  $$a = \sin^2\left(\frac{\Delta \varphi}{2}\right) + \cos
+                  \varphi_1 \cdot \cos \varphi_2 \cdot \sin^2\left(\frac{\Delta
+                  \lambda}{2}\right)$$
+                  <div class="my-2 text-slate-500">
+                    lalu hitung radius kelengkungan:
+                  </div>
+                  $$c = 2 \cdot \text{atan2}\left(\sqrt{a}, \sqrt{1-a}\right)$$
+                  <div class="my-2 text-slate-500">Jarak Akhir:</div>
+                  $$d = R \cdot c$$
+                </div>
+
+                <div
+                  class="grid grid-cols-2 gap-4 text-[10px] text-slate-400 pt-2"
+                >
+                  <div>
+                    <span class="block text-slate-200 font-mono font-semibold"
+                      >$R = 6371 \text{ km}$</span
+                    >
+                    <span>Konstanta radius bumi.</span>
+                  </div>
+                  <div>
+                    <span class="block text-slate-200 font-mono font-semibold"
+                      >$\varphi, \lambda$</span
+                    >
+                    <span
+                      >Latitude &amp; longitude simpul yang diubah dalam
+                      radian.</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER PORTAL -->
+    <footer class="bg-slate-950 text-slate-450 py-12 border-t border-slate-900">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-5 space-y-3">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-8 h-8 rounded-lg bg-unib-600 flex items-center justify-center text-white font-black text-sm shadow-md"
+              >
+                U
+              </div>
+              <span
+                class="font-display font-extrabold text-sm tracking-widest text-white"
+                >NAVIGASI CERDAS UNIB</span
+              >
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Implementasi proyek algoritma shortest path adaptif untuk memenuhi
+              tugas mata kuliah Artificial Intelligence. Dirancang khusus untuk
+              menavigasi lingkungan dinamis kampus Universitas Bengkulu.
+            </p>
+          </div>
+
+          <div class="md:col-span-2"></div>
+
+          <div class="md:col-span-5 md:text-right space-y-2 text-xs">
+            <span class="block text-slate-200 font-bold">Tim Pengembangan</span>
+            <p class="text-slate-400 leading-relaxed">
+              Ali Akbar Bermano — G1A024041<br />
+              Program Studi Informatika, Semester Ganjil Tahun Ajar 2026<br />
+              Universitas Bengkulu (UNIB)
+            </p>
+            <div class="pt-2">
+              <a
+                href="https://ali2006.pythonanywhere.com/"
+                target="_blank"
+                class="inline-flex items-center gap-1.5 text-unib-400 hover:text-unib-300 font-bold transition-colors"
+              >
+                <span>Hubungkan Ke Aplikasi Peta Live</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-8 pt-8 border-t border-slate-900 text-center text-[10px] text-slate-600"
+        >
+          &copy; 2026 Ali Akbar Bermano (G1A024041). Seluruh hak cipta
+          dilindungi undang-undang.
+        </div>
+      </div>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPT FOR SIMULATOR & MOBILE MENU -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Render Math with KaTeX Auto-Render setelah DOM siap sepenuhnya
+        if (typeof renderMathInElement === "function") {
+          renderMathInElement(document.body, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "\\[", right: "\\]", display: true },
+            ],
+            throwOnError: false,
+          });
+        }
+
+        // Inisialisasi Lucide icons
+        lucide.createIcons();
+
+        // === LOGIKA MOBILE MENU ===
+        const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
+        const mobileMenu = document.getElementById("mobile-menu");
+        const menuIcon = document.getElementById("menu-icon");
+        const mobileLinks = document.querySelectorAll(".mobile-link");
+
+        function toggleMobileMenu() {
+          const isHidden = mobileMenu.classList.contains("hidden");
+          if (isHidden) {
+            mobileMenu.classList.remove("hidden");
+            menuIcon.setAttribute("data-lucide", "x");
+          } else {
+            mobileMenu.classList.add("hidden");
+            menuIcon.setAttribute("data-lucide", "menu");
+          }
+          // Update lucide icons dynamically
+          lucide.createIcons();
+        }
+
+        mobileMenuToggle.addEventListener("click", toggleMobileMenu);
+
+        // Tutup menu ponsel ketika salah satu link diklik
+        mobileLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            mobileMenu.classList.add("hidden");
+            menuIcon.setAttribute("data-lucide", "menu");
+            lucide.createIcons();
+          });
+        });
+
+        // === LOGIKA SIMULATOR ===
+        const slideDistance = document.getElementById("slide_distance");
+        const selectScenario = document.getElementById("select_scenario");
+        const slideCrowd = document.getElementById("slide_crowd");
+
+        // Nilai Tampilan
+        const valDistance = document.getElementById("val_distance");
+        const valCrowd = document.getElementById("val_crowd");
+        const displayCost = document.getElementById("display_cost");
+
+        // Elemen rincian kalkulasi
+        const breakDistance = document.getElementById("break_distance");
+        const breakScenario = document.getElementById("break_scenario");
+        const breakPenalty = document.getElementById("break_penalty");
+        const simWarning = document.getElementById("simulator_warning");
+
+        function getCrowdMultiplier(crowdValue) {
+          // Konversi multiplier kepadatan linear
+          if (crowdValue <= 20) return 1.0;
+          if (crowdValue <= 50) return 1.2;
+          if (crowdValue <= 75) return 1.8;
+          if (crowdValue <= 90) return 3.0;
+          return 9999; // Infinity blocked
+        }
+
+        function getCrowdLabel(crowdValue) {
+          if (crowdValue <= 20) return `Sangat Sepi (${crowdValue}%)`;
+          if (crowdValue <= 50) return `Normal / Cukup (${crowdValue}%)`;
+          if (crowdValue <= 75) return `Padat Merayap (${crowdValue}%)`;
+          if (crowdValue <= 90) return `Sangat Padat (${crowdValue}%)`;
+          return `Penuh/Diblokir (${crowdValue}%)`;
+        }
+
+        function recalculateCost() {
+          const distance = parseFloat(slideDistance.value);
+          const scenarioCoeff = parseFloat(selectScenario.value);
+          const crowdPercent = parseFloat(slideCrowd.value);
+
+          // Update visual slider label
+          valDistance.textContent = `${distance} meter`;
+          valCrowd.textContent = getCrowdLabel(crowdPercent);
+
+          const crowdPenaltyMultiplier = getCrowdMultiplier(crowdPercent);
+
+          let isBlocked = false;
+          let warningMessage = "";
+
+          // Cek penutupan manual
+          if (scenarioCoeff >= 9999 || crowdPenaltyMultiplier >= 9999) {
+            isBlocked = true;
+            warningMessage =
+              "🛑 Jalur ditutup resmi oleh panitia atau mengalami kepadatan kritis (Infinity).";
+          }
+
+          if (isBlocked) {
+            displayCost.textContent = "∞ (INFINITY)";
+            displayCost.className =
+              "text-5xl font-mono font-black tracking-tight text-rose-500";
+            breakDistance.textContent = `${distance}m`;
+            breakScenario.textContent = "INFINITY";
+            breakPenalty.textContent = "N/A";
+            simWarning.innerHTML = `⚠️ <span class="font-bold text-rose-400">Jalur Mati:</span> ${warningMessage}`;
+            return;
+          }
+
+          // Kalkulasi Rumus Presisi:
+          // cost = d(e) * k_scenario * (1 + crowd/20)
+          const crowdModifier = 1 + crowdPercent / 20.0;
+          const cost = distance * scenarioCoeff * crowdModifier;
+
+          // Tampilkan hasil
+          displayCost.textContent = cost.toFixed(2);
+          displayCost.className =
+            "text-5xl font-mono font-black tracking-tight text-cyan-400";
+
+          breakDistance.textContent = `${distance}m`;
+          breakScenario.textContent = `${scenarioCoeff.toFixed(1)}x`;
+          breakPenalty.textContent = `${crowdModifier.toFixed(2)}x`;
+
+          // Update status peringatan visual rute
+          const ratio = cost / distance;
+          if (ratio > 3) {
+            simWarning.innerHTML =
+              "⚠️ <span class='font-bold text-amber-400'>Hambatan Sangat Tinggi:</span> Rute sangat macet atau mengalami perbaikan berat. Sangat disarankan mencari rute alternatif.";
+          } else if (ratio > 1.5) {
+            simWarning.innerHTML =
+              "🟡 <span class='font-bold text-yellow-400'>Hambatan Sedang:</span> Rute agak lambat karena penalti kondisi jalan atau kepadatan jam sibuk kuliah.";
+          } else {
+            simWarning.innerHTML =
+              "🟢 <span class='font-bold text-emerald-400'>Lancar:</span> Rute bebas hambatan. ETA berjalan rata-rata normal adalah optimal (~1.2 m/s).";
+          }
+        }
+
+        // Binding aktivitas element
+        slideDistance.addEventListener("input", recalculateCost);
+        selectScenario.addEventListener("change", recalculateCost);
+        slideCrowd.addEventListener("input", recalculateCost);
+
+        // Inisialisasi hitungan awal
+        recalculateCost();
+
+        // ==========================================
+        // INTEGRASI GEMINI AI (LLM CORES)
+        // ==========================================
+        const apiKey = ""; // Disuntikkan secara otomatis oleh environment saat runtime
+
+        // Kerangka Sistem Instruksi AI (System Prompt) - DISERAHKAN SESUAI SCREENSHOT (HANYA 4 KONDISI)
+        const systemPrompt = `Anda adalah Asisten Pakar Navigasi Cerdas Kampus Universitas Bengkulu (UNIB).
+Anda dibekali keahlian penuh dalam menganalisis peta, parameter graf, dan algoritma Dynamic A*.
+Informasi proyek Anda:
+- 51 POI Utama (seperti Rektorat, GKB, Gedung Kuliah, Perpustakaan, dsb) + 149 Waypoint tambahan (Total 200 Node).
+- 199 Jalan Utama + 14 Segmen otomatis (Total 213 Edge).
+- Scenario Engine pada program ini sengaja disediakan kosong (clean) secara bawaan agar pengguna dapat bebas merancang dan mengaktifkan skenario kustom mereka sendiri (seperti membuat kemacetan lokal, menutup ruas jalan khusus, atau mengatur jalur satu arah).
+- Aturan Multiplier Hambatan Kondisi Jalan (k_scenario) HANYA TERDIRI DARI 4 OPSI BERIKUT: 
+  * Normal (x1.0)
+  * Sibuk / Busy (x2.0)
+  * Berlubang (x1.6)
+  * Ditutup / Closed (Infinity)
+- Kecepatan berjalan normal diasumsikan 1.2 m/s.
+- Algoritma Dynamic A* menggunakan fungsi evaluasi: f(n) = g(n) + h(n) + s(n).
+
+Berikan jawaban yang profesional, informatif, dan ringkas dalam Bahasa Indonesia. Jika pengguna bertanya tentang skenario bawaan, jelaskan bahwa aplikasi ini dirancang fleksibel sehingga pengguna dapat bebas mengonfigurasi skenario kustom mereka sendiri melalui peta interaktif.`;
+
+        // Fungsi Inti Pemanggilan Gemini API dengan Exponential Backoff
+        async function callGemini(promptText, isInterpreter = false) {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+          const customSystemInstruction = isInterpreter
+            ? "Anda adalah Interpreter Simulasi Bobot Peta UNIB. Tugas Anda adalah menjelaskan dampak konfigurasi bobot jalan secara ringkas kepada pengguna awam berdasarkan parameter kustom (Normal x1.0, Sibuk x2.0, Berlubang x1.6, Ditutup Infinity)."
+            : systemPrompt;
+
+          const payload = {
+            contents: [{ parts: [{ text: promptText }] }],
+            systemInstruction: { parts: [{ text: customSystemInstruction }] },
+          };
+
+          let delay = 1000;
+          for (let retry = 0; retry < 5; retry++) {
+            try {
+              const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+
+              if (response.ok) {
+                const result = await response.json();
+                return (
+                  result.candidates?.[0]?.content?.parts?.[0]?.text ||
+                  "Maaf, tidak ada respon teks dari asisten AI."
+                );
+              }
+            } catch (err) {
+              // Retry silently
+            }
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            delay *= 2; // Exponential Backoff
+          }
+          throw new Error(
+            "Gagal terhubung dengan layanan Gemini AI setelah 5 kali percobaan. Silakan periksa jaringan internet Anda.",
+          );
+        }
+
+        // --- Fitur 1: Interpreter Bobot AI pada Simulator ---
+        const btnExplainAI = document.getElementById("btn-explain-weights-ai");
+
+        btnExplainAI.addEventListener("click", async () => {
+          const distance = slideDistance.value;
+          const scenarioText =
+            selectScenario.options[selectScenario.selectedIndex].text;
+          const crowdPercent = slideCrowd.value;
+          const calculatedCost = displayCost.textContent.trim();
+
+          const prompt = `Interpretasikan hasil kalkulasi bobot berikut untuk pengguna navigasi di kampus UNIB:
+- Jarak Fisik: ${distance} meter
+- Faktor Hambatan: ${scenarioText}
+- Kepadatan Massa: ${crowdPercent}%
+- Total Bobot Hasil Perhitungan w(e): ${calculatedCost}
+
+Berikan kesimpulan ringkas (maksimal 3 kalimat) apakah rute ini direkomendasikan atau tidak, beserta dampaknya bagi pejalan kaki biasa.`;
+
+          // Update UI State ke Loading
+          btnExplainAI.disabled = true;
+          const originalText = btnExplainAI.innerHTML;
+          btnExplainAI.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin text-white"></i> <span>Menganalisis...</span>`;
+          lucide.createIcons();
+
+          try {
+            const explanation = await callGemini(prompt, true);
+
+            // Tampilkan respon dalam modal mengambang kustom
+            const existingModal = document.getElementById("ai-modal-container");
+            if (existingModal) existingModal.remove();
+
+            const modalHTML = `
+                        <div id="ai-modal-container" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+                            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-cyan-400">
+                                        <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+                                        <span class="font-display font-bold text-sm">Analisis Bobot AI</span>
+                                    </div>
+                                    <button onclick="document.getElementById('ai-modal-container').remove()" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <div class="text-xs text-slate-300 leading-relaxed space-y-2">
+                                    ${explanation.replace(/\n/g, "<br>")}
+                                </div>
+                                <div class="pt-2 text-right">
+                                    <button onclick="document.getElementById('ai-modal-container').remove()" class="px-4 py-2 bg-unib-600 hover:bg-unib-700 text-white rounded-xl text-xs font-semibold transition-colors">
+                                        Tutup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            document.body.insertAdjacentHTML("beforeend", modalHTML);
+            lucide.createIcons();
+          } catch (error) {
+            showAIError(error.message);
+          } finally {
+            btnExplainAI.disabled = false;
+            btnExplainAI.innerHTML = originalText;
+            lucide.createIcons();
+          }
+        });
+
+        // --- Fitur 2: Asisten AI Interaktif ---
+        const textareaPrompt = document.getElementById("ai-user-prompt");
+        const btnSubmitAI = document.getElementById("btn-submit-ai");
+        const loaderAI = document.getElementById("ai-loader");
+        const responseContainer = document.getElementById(
+          "ai-response-container",
+        );
+        const responseText = document.getElementById("ai-response-text");
+        const errorAlert = document.getElementById("ai-error-alert");
+        const errorMessage = document.getElementById("ai-error-message");
+        const promptButtons = document.querySelectorAll(".ai-prompt-btn");
+
+        // Quick Prompt Suggestions click handler
+        promptButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const rawText = button.textContent.trim().replace(/^✨\s*/, "");
+            textareaPrompt.value = rawText;
+            textareaPrompt.focus();
+          });
+        });
+
+        function showAIError(msg) {
+          errorMessage.textContent = msg;
+          errorAlert.classList.remove("hidden");
+          setTimeout(() => {
+            errorAlert.classList.add("hidden");
+          }, 8000);
+        }
+
+        btnSubmitAI.addEventListener("click", async () => {
+          const userQuery = textareaPrompt.value.trim();
+          if (!userQuery) {
+            showAIError(
+              "Mohon masukkan pertanyaan atau pilih salah satu rekomendasi di atas.",
+            );
+            return;
+          }
+
+          // UI Loading States
+          btnSubmitAI.disabled = true;
+          loaderAI.classList.remove("hidden");
+          responseContainer.classList.add("hidden");
+          errorAlert.classList.add("hidden");
+
+          try {
+            const reply = await callGemini(userQuery);
+
+            // Simple Markdown-like to HTML conversion
+            const formattedReply = reply
+              .replace(/\*\*(.*?)\*\"/g, "<strong>$1</strong>")
+              .replace(/\*(.*?)\*/g, "<em>$1</em>")
+              .replace(
+                /`([^`]+)`/g,
+                '<code class="bg-slate-800 text-cyan-400 px-1.5 py-0.5 rounded font-mono text-xs">$1</code>',
+              )
+              .replace(/\n/g, "<br>");
+
+            responseText.innerHTML = formattedReply;
+            responseContainer.classList.remove("hidden");
+          } catch (error) {
+            showAIError(error.message);
+          } finally {
+            btnSubmitAI.disabled = false;
+            loaderAI.classList.add("hidden");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
