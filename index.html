@@ -147,11 +147,6 @@
           <a href="#simulator" class="hover:text-unib-600 transition-colors"
             >Simulasi Bobot</a
           >
-          <a
-            href="#ai-assistant"
-            class="hover:text-unib-600 transition-colors flex items-center gap-1"
-            >✨ Asisten AI</a
-          >
           <a href="#panduan" class="hover:text-unib-600 transition-colors"
             >Cara Pakai</a
           >
@@ -201,11 +196,6 @@
           href="#simulator"
           class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
           >Simulasi Bobot</a
-        >
-        <a
-          href="#ai-assistant"
-          class="mobile-link block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-unib-50 hover:text-unib-600 transition-all"
-          >✨ Asisten AI</a
         >
         <a
           href="#panduan"
@@ -1071,151 +1061,6 @@
         </div>
       </section>
 
-      <!-- SEKSI ASISTEN AI INTELLIGENT (Gemini Feature 2) -->
-      <section
-        id="ai-assistant"
-        class="py-20 bg-gradient-to-b from-slate-900 to-unib-950 text-white relative overflow-hidden"
-      >
-        <div
-          class="absolute inset-0 opacity-10 bg-[radial-gradient(#2563eb_1.5px,transparent_1.5px)] [background-size:24px_24px]"
-        ></div>
-
-        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
-            <div
-              class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-unib-800/80 border border-unib-700/50 text-cyan-400 mb-2 shadow-lg shadow-blue-500/15"
-            >
-              <i data-lucide="bot" class="w-6 h-6"></i>
-            </div>
-            <h2
-              class="font-display font-extrabold text-3xl text-white tracking-tight"
-            >
-              Asisten Konsultan Navigasi ✨ AI
-            </h2>
-            <p class="text-slate-450 text-sm max-w-lg mx-auto">
-              Tanyakan skenario rute, rincian teknis algoritma Dynamic A*, atau
-              rancangan graf kampus UNIB langsung kepada kecerdasan buatan
-              Gemini.
-            </p>
-          </div>
-
-          <!-- Chatbox / Prompt Wrapper -->
-          <div
-            class="bg-slate-950/80 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6"
-          >
-            <!-- Suggestions grid -->
-            <div class="space-y-2">
-              <span
-                class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block"
-                >Pertanyaan Rekomendasi</span
-              >
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
-                >
-                  ✨ Bagaimana cara merancang skenario kemacetan kustom saya
-                  sendiri?
-                </button>
-                <button
-                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
-                >
-                  ✨ Mengapa Dynamic A* lebih unggul dari Dijkstra pada graf
-                  kampus UNIB?
-                </button>
-                <button
-                  class="ai-prompt-btn text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-unib-500/50 hover:bg-slate-900 text-xs text-slate-300 transition-all duration-200"
-                >
-                  ✨ Bagaimana formula Haversine membantu mengukur jarak fisik
-                  antar POI?
-                </button>
-              </div>
-            </div>
-
-            <!-- Input Form -->
-            <div class="space-y-3">
-              <div class="relative">
-                <textarea
-                  id="ai-user-prompt"
-                  rows="3"
-                  class="w-full bg-slate-900/90 border border-slate-800 focus:border-unib-500 rounded-2xl py-3 px-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-unib-500/20 transition-all"
-                  placeholder="Ketik pertanyaan Anda tentang navigasi kampus UNIB di sini..."
-                ></textarea>
-                <div class="absolute bottom-3 right-3 flex items-center gap-2">
-                  <span class="text-[10px] text-slate-500 font-mono"
-                    >Gemini 2.5 Flash</span
-                  >
-                </div>
-              </div>
-
-              <div class="flex items-center justify-between flex-wrap gap-3">
-                <span class="text-xs text-slate-500">
-                  Diproses secara real-time berdasarkan data parameter kampus
-                  Anda.
-                </span>
-                <button
-                  id="btn-submit-ai"
-                  class="inline-flex items-center gap-2 bg-gradient-to-r from-unib-600 to-indigo-600 hover:from-unib-700 hover:to-indigo-700 text-white text-sm font-bold px-6 py-3 rounded-xl transition-all duration-300 transform active:scale-95 glow-button"
-                >
-                  <i data-lucide="sparkles" class="w-4 h-4"></i>
-                  <span>Tanya ✨ Gemini AI</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Output Panel -->
-            <div
-              id="ai-response-container"
-              class="hidden border-t border-slate-800 pt-6 space-y-4"
-            >
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-lg bg-unib-600/20 border border-unib-500/30 flex items-center justify-center text-cyan-400"
-                >
-                  <i data-lucide="sparkles" class="w-4 h-4 animate-pulse"></i>
-                </div>
-                <span
-                  class="text-xs font-bold text-slate-400 uppercase tracking-widest"
-                  >Respon Asisten AI</span
-                >
-              </div>
-
-              <!-- Response Text Area -->
-              <div
-                id="ai-response-text"
-                class="text-sm text-slate-200 leading-relaxed bg-slate-900/40 border border-slate-850 rounded-2xl p-5 overflow-auto max-h-[350px] space-y-3 prose prose-invert prose-sm"
-              >
-                <!-- Response injected dynamically -->
-              </div>
-            </div>
-
-            <!-- Loader (In-memory, clean UI) -->
-            <div
-              id="ai-loader"
-              class="hidden flex flex-col items-center justify-center py-8 space-y-3"
-            >
-              <div
-                class="w-10 h-10 border-4 border-unib-500 border-t-transparent rounded-full animate-spin"
-              ></div>
-              <span class="text-xs text-slate-455 animate-pulse font-medium"
-                >Gemini AI sedang menyusun analisis rute terbaik...</span
-              >
-            </div>
-
-            <!-- Error Alert -->
-            <div
-              id="ai-error-alert"
-              class="hidden p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex gap-2"
-            >
-              <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-              <span id="ai-error-message"
-                >Terjadi kesalahan saat memproses permintaan AI. Silakan coba
-                kembali.</span
-              >
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- USER GUIDE SECTION -->
       <section id="panduan" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1829,73 +1674,6 @@ Berikan kesimpulan ringkas (maksimal 3 kalimat) apakah rute ini direkomendasikan
             btnExplainAI.disabled = false;
             btnExplainAI.innerHTML = originalText;
             lucide.createIcons();
-          }
-        });
-
-        // --- Fitur 2: Asisten AI Interaktif ---
-        const textareaPrompt = document.getElementById("ai-user-prompt");
-        const btnSubmitAI = document.getElementById("btn-submit-ai");
-        const loaderAI = document.getElementById("ai-loader");
-        const responseContainer = document.getElementById(
-          "ai-response-container",
-        );
-        const responseText = document.getElementById("ai-response-text");
-        const errorAlert = document.getElementById("ai-error-alert");
-        const errorMessage = document.getElementById("ai-error-message");
-        const promptButtons = document.querySelectorAll(".ai-prompt-btn");
-
-        // Quick Prompt Suggestions click handler
-        promptButtons.forEach((button) => {
-          button.addEventListener("click", () => {
-            const rawText = button.textContent.trim().replace(/^✨\s*/, "");
-            textareaPrompt.value = rawText;
-            textareaPrompt.focus();
-          });
-        });
-
-        function showAIError(msg) {
-          errorMessage.textContent = msg;
-          errorAlert.classList.remove("hidden");
-          setTimeout(() => {
-            errorAlert.classList.add("hidden");
-          }, 8000);
-        }
-
-        btnSubmitAI.addEventListener("click", async () => {
-          const userQuery = textareaPrompt.value.trim();
-          if (!userQuery) {
-            showAIError(
-              "Mohon masukkan pertanyaan atau pilih salah satu rekomendasi di atas.",
-            );
-            return;
-          }
-
-          // UI Loading States
-          btnSubmitAI.disabled = true;
-          loaderAI.classList.remove("hidden");
-          responseContainer.classList.add("hidden");
-          errorAlert.classList.add("hidden");
-
-          try {
-            const reply = await callGemini(userQuery);
-
-            // Simple Markdown-like to HTML conversion
-            const formattedReply = reply
-              .replace(/\*\*(.*?)\*\"/g, "<strong>$1</strong>")
-              .replace(/\*(.*?)\*/g, "<em>$1</em>")
-              .replace(
-                /`([^`]+)`/g,
-                '<code class="bg-slate-800 text-cyan-400 px-1.5 py-0.5 rounded font-mono text-xs">$1</code>',
-              )
-              .replace(/\n/g, "<br>");
-
-            responseText.innerHTML = formattedReply;
-            responseContainer.classList.remove("hidden");
-          } catch (error) {
-            showAIError(error.message);
-          } finally {
-            btnSubmitAI.disabled = false;
-            loaderAI.classList.add("hidden");
           }
         });
       });
